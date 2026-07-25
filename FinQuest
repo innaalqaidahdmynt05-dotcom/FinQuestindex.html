@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinQuest - Game Kelola Uang Saku Asrama</title>
+    <title>FinQuest - Game Simulasi Keuangan Anak Asrama</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -113,17 +113,6 @@
             background-color: var(--accent-hover);
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-        }
-
-        .btn-outline:hover {
-            background: var(--accent);
-            color: white;
-        }
-
         .input-group {
             margin-bottom: 12px;
         }
@@ -223,7 +212,7 @@
             <span class="stat-value" id="valHealth">100</span>
         </div>
         <div class="stat-item">
-            <span class="stat-label">😊 Mood & Sos</span>
+            <span class="stat-label">😊 Kebahagiaan</span>
             <span class="stat-value" id="valHappiness">100</span>
         </div>
         <div class="stat-item">
@@ -234,9 +223,9 @@
 
     <!-- SCREEN 1: START -->
     <div class="screen active" id="screenStart">
-        <h2>Selamat Datang, Anak Asrama! 👋</h2>
+        <h2>Selamat Datang di Asrama! 👋</h2>
         <p style="margin: 12px 0; font-size: 0.95rem; color: var(--text-dim); line-height: 1.5;">
-            Kamu baru saja menerima <b>uang saku beasiswa Rp900.000/bulan</b>. Kebutuhan fasilitas dasar seperti WiFi, air, dan listrik di asrama sudah gratis ditanggung program. Tugasmu adalah bertahan selama 1 semester (Agustus - Desember) sambil menjaga fisik, nilai kuliah, dan tabungan tetap aman.
+            Kamu memegang <b>uang saku Rp900.000/bulan</b>. Fasilitas dasar seperti WiFi, air, dan listrik asrama sudah ditanggung gratis. Tugasmu adalah mengelola uang saku selama 1 semester (Agustus - Desember) melewati UTS & UAS, krisis terduga, hingga peluang investasi.
         </p>
         <div class="input-group">
             <label for="playerName">Nama Panggilanmu:</label>
@@ -247,24 +236,24 @@
 
     <!-- SCREEN 2: ALLOCATE BUDGET -->
     <div class="screen" id="screenBudget">
-        <h3 id="budgetMonthTitle">Atur Duit Bulan Agustus</h3>
+        <h3 id="budgetMonthTitle">Atur Anggaran Bulan Agustus</h3>
         <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">
-            Total Uang di Tangan: <b>Rp900.000</b>. (Note: Rp100.000 wajib dipakai buat Kas Asrama).
+            Total Uang Masuk: <b>Rp900.000</b>. (Note: Rp100.000 otomatis dialokasikan untuk Iuran Kas Wajib Asrama).
         </p>
         <div class="input-group">
-            <label>1. Pos Survival (Makan & Kas Asrama - Min. Rp450.000)</label>
+            <label>1. Pos Survival (Uang Makan & Kas Asrama - Min. Rp450.000)</label>
             <input type="number" id="allocSurv" value="450000">
         </div>
         <div class="input-group">
-            <label>2. Pos Akademik & Kampus (Buku, Print, Tugas)</label>
+            <label>2. Pos Akademik & Organisasi (Modul, Print, Kegiatan)</label>
             <input type="number" id="allocAcad" value="150000">
         </div>
         <div class="input-group">
-            <label>3. Pos Proteksi & Dana Darurat</label>
+            <label>3. Pos Proteksi & Darurat (Asuransi & Simpanan Tunai)</label>
             <input type="number" id="allocEmrg" value="150000">
         </div>
         <div class="input-group">
-            <label>4. Pos Tabungan & Masa Depan</label>
+            <label>4. Pos Future (Tabungan Masa Depan)</label>
             <input type="number" id="allocFutu" value="150000">
         </div>
         <div id="budgetError" style="color: var(--danger); font-size: 0.85rem; margin-bottom: 8px;"></div>
@@ -275,7 +264,7 @@
     <div class="screen" id="screenEvent">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <span class="badge" id="eventBadge">Bulan 1 - Event 1</span>
-            <span style="font-size: 0.8rem; color: var(--text-dim);" id="cashInfo">Tabungan: Rp0</span>
+            <span style="font-size: 0.8rem; color: var(--text-dim);" id="cashInfo">Dana Darurat: Rp0</span>
         </div>
         <div class="event-box">
             <div class="event-title" id="eventTitle">Judul Event</div>
@@ -286,8 +275,8 @@
 
     <!-- SCREEN 4: END REPORT -->
     <div class="screen" id="screenReport">
-        <h3>🎉 Semester Selesai! Laporan Hasil Keuangan</h3>
-        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Berikut adalah hasil perjuanganmu selama 5 bulan mengelola uang saku di asrama:</p>
+        <h3>🎉 Semester Selesai! Rapor Kompetensi FinQuest</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Berikut adalah rekapitulasi performamu selama 1 semester mengelola keuangan asrama:</p>
         <div class="report-card">
             <div style="text-align: center; font-size: 0.9rem; color: var(--text-dim);" id="evalTitle">TINGKAT EVALUASI</div>
             <div class="score-big" id="finalScore">0</div>
@@ -300,7 +289,6 @@
 </div>
 
 <script>
-    // State Game
     let player = {
         name: "Awardee",
         health: 100,
@@ -319,189 +307,202 @@
     let currentMonthIdx = 0;
     let currentEventIdx = 0;
 
-    const months = ["Agustus", "September", "Oktober (UTS)", "November", "Desember (UAS)"];
+    const months = ["Agustus", "September", "Oktober (Pekan UTS)", "November", "Desember (Pekan UAS)"];
 
-    // Daftar Multi-Event per Bulan
+    // Struktur Multi-Event Baru per Bulan
     const monthEvents = [
-        // Bulan 1: Agustus
+        // BULAN 1: AGUSTUS (Adaptasi, Budgeting & Proteksi Awal)
         [
             {
-                title: "Pasar Proteksi Astra (Khusus Bulan Pertama)",
-                desc: "Mumpung awal semester, ada penawaran proteksi kesehatan mikro (Garda Healthtech - Rp30.000/sem). Beli sekarang biar tenang?",
+                title: "Opsi Proteksi Awal Semester (Pasar Asuransi Astra)",
+                desc: "Di awal semester, kamu bisa membeli proteksi mikro dari Pos Proteksi & Darurat agar siap menghadapi risiko ke depan.",
                 choices: [
-                    { text: "Beli Garda Healthtech (Rp30.000 dari Pos Darurat)", action: () => {
-                        if(player.posEmrg >= 30000) { player.posEmrg -= 30000; player.hasHealthtech = true; alert("Mantap! Proteksi kesehatan aktif selama 1 semester."); }
-                        else { alert("Uang Pos Daruratmu kurang!"); }
+                    { text: "Beli Garda Healthtech (Rp30.000 / semester)", action: () => {
+                        if(player.posEmrg >= 30000) { player.posEmrg -= 30000; player.hasHealthtech = true; alert("✅ Garda Healthtech aktif! Kamu terlindungi dari biaya medis rawat jalan."); }
+                        else { alert("❌ Dana di Pos Proteksi kurang!"); }
                     }},
-                    { text: "Lompati, tidak usah beli dulu", action: () => {} }
+                    { text: "Beli Paket Lengkap: Garda Healthtech + Garda Motor (Rp50.000)", action: () => {
+                        if(player.posEmrg >= 50000) { player.posEmrg -= 50000; player.hasHealthtech = true; player.hasMotorProt = true; alert("✅ Garda Healthtech & Garda Motor aktif!"); }
+                        else { alert("❌ Dana di Pos Proteksi kurang!"); }
+                    }},
+                    { text: "Tidak membeli asuransi dulu", action: () => { alert("Kamu memilih tidak mengambil proteksi di awal semester."); }}
                 ]
             },
             {
-                title: "Diajak Nongkrong Anak Angkatan",
-                desc: "Anak-anak kelas ngajak ngopi di kafe hits habis kuliah. Bayar sekitar Rp45.000. Ikut nggak?",
+                title: "Keinginan vs Kebutuhan Kampus",
+                desc: "Anak-anak angkatan mengajak nongkrong di kafe hits habis kuliah (Bayar Rp45.000), tapi Dosen mewajibkan beli Buku Teks Utama (Bayar Rp50.000).",
                 choices: [
-                    { text: "Ikut nongkrong (Pakai uang makan Rp45.000)", action: () => {
-                        if(player.posSurv >= 45000) { player.posSurv -= 45000; player.happiness += 10; }
-                        else { player.happiness -= 5; alert("Uang makan pas-pasan, mending skip."); }
+                    { text: "Prioritaskan Beli Buku Teks Dosen (Rp50.000 dari Pos Akademik)", action: () => {
+                        if(player.posAcad >= 50000) { player.posAcad -= 50000; player.academic += 5; }
+                        else { player.academic -= 10; alert("Pos Akademik tidak cukup!"); }
                     }},
-                    { text: "Tolak halus, mending makan di asrama", action: () => { player.happiness -= 5; }}
+                    { text: "Ikut Nongkrong di Kafe (Rp45.000 dari Pos Survival)", action: () => {
+                        if(player.posSurv >= 45000) { player.posSurv -= 45000; player.happiness += 10; player.academic -= 5; }
+                        else { player.happiness -= 5; alert("Uang Pos Survival pas-pasan!"); }
+                    }}
                 ]
             },
             {
-                title: "Adaptasi Cuaca Asrama",
-                desc: "Gara-gara cuaca gonta-ganti, tenggorokan mulai radang. Perlu beli obat toko seharga Rp15.000.",
+                title: "Kesehatan: Perubahan Cuaca Asrama",
+                desc: "Perubahan cuaca & adaptasi lingkungan asrama bikin kamu kena radang tenggorokan ringan. Perlu beli obat toko seharga Rp15.000.",
                 choices: [
-                    { text: "Obati langsung", action: () => {
-                        if(player.hasHealthtech) { alert("Cover Asuransi! Biaya obat gratis Rp0."); }
+                    { text: "Beli obat radang toko (Rp15.000)", action: () => {
+                        if(player.hasHealthtech) { alert("🛡️ Tercover Garda Healthtech! Biaya obat Rp0."); }
                         else if(player.posEmrg >= 15000) { player.posEmrg -= 15000; }
-                        else { player.health -= 10; alert("Nggak ada uang darurat, ditahan deh sakitnya. (Health -10)"); }
+                        else { player.health -= 10; alert("Dana darurat tidak cukup, ditahan sakitnya. (Kesehatan -10)"); }
                     }}
                 ]
             }
         ],
-        // Bulan 2: September
+
+        // BULAN 2: SEPTEMBER (Dinamika Organisasi & Asrama)
         [
             {
-                title: "Tugas Kelompok Praktikum",
-                desc: "Ada tugas kelompok bikin laporan cetak & butuh kuota tambahan buat Zoom malam. Total Rp35.000.",
+                title: "Tugas Kelompok & Kuota Zoom Mendadak",
+                desc: "Tugas kelompok membuat laporan cetak/jilid dan butuh kuota besar untuk zoom meeting mendadak (Biaya Rp35.000).",
                 choices: [
-                    { text: "Bayar pakai Pos Akademik", action: () => {
+                    { text: "Bayar dari Pos Akademik (Rp35.000)", action: () => {
                         if(player.posAcad >= 35000) { player.posAcad -= 35000; }
-                        else { player.academic -= 15; alert("Uang akademik habis! Nilai tugas minus. (Akademik -15)"); }
+                        else { player.academic -= 15; alert("Pos Akademik kurang! Nilai Akademik drop -15."); }
                     }}
                 ]
             },
             {
-                title: "Patungan Alat Asrama Rusak",
-                desc: "Pompa air asrama mendadak mati. Anak-anak asrama sepakat patungan Rp25.000 per orang.",
+                title: "Fasilitas Asrama Rusak Bersamaan",
+                desc: "Tabung gas & pompa air asrama habis/rusak bersamaan. Ada patungan darurat anak asrama sebesar Rp25.000.",
                 choices: [
-                    { text: "Bayar patungan dari Dana Darurat", action: () => {
+                    { text: "Bayar patungan dari Dana Darurat (Rp25.000)", action: () => {
                         if(player.posEmrg >= 25000) { player.posEmrg -= 25000; player.happiness += 5; }
-                        else { player.happiness -= 15; alert("Nggak bisa bayar patungan, bikin canggung sama anak asrama. (Mood -15)"); }
+                        else { player.happiness -= 15; alert("Gagal bayar patungan! Konflik dengan anak asrama. (Kebahagiaan -15)"); }
                     }}
                 ]
             },
             {
-                title: "Cucian Baju Menumpuk",
-                desc: "Jadwal kuliah padat banget minggu ini, baju kotor numpuk. Mau laundry express (Rp30.000) atau cuci sendiri?",
+                title: "Dilema Baju Kotor Menumpuk",
+                desc: "Jadwal harian padat banget. Pilih Laundry Express (Rp30.000) atau cuci sendiri di asrama?",
                 choices: [
-                    { text: "Laundry Express (Rp30.000 dari Pos Makan)", action: () => { if(player.posSurv>=30000) player.posSurv-=30000; else player.health-=5; }},
-                    { text: "Cuci sendiri aja malam-malam", action: () => { player.health -= 5; }}
+                    { text: "Laundry Express (Rp30.000 dari Pos Survival)", action: () => {
+                        if(player.posSurv >= 30000) { player.posSurv -= 30000; player.health += 5; }
+                        else { player.health -= 5; alert("Pos Survival kurang untuk laundry!"); }
+                    }},
+                    { text: "Cuci Sendiri di Asrama (Hemat Rp0, Tapi Capek)", action: () => { player.health -= 5; }}
                 ]
             }
         ],
-        // Bulan 3: Oktober (UTS)
+
+        // BULAN 3: OKTOBER (Pekan UTS & Simulasi Krisis Sedang)
         [
             {
-                title: "Cetak Modul Ujian UTS Mendadak",
-                desc: "Dosen minta lembar kerja khusus dikumpul saat UTS besok pagi. Biaya cetak Rp25.000.",
+                title: "EVENT KHUSUS UTS: Cetak Berkas Ujian Mendadak",
+                desc: "Wajib cetak berkas ujian/modul praktikum UTS mendadak sebelum ujian dimulai (Bayar Rp25.000). Jika tidak dibayar, Nilai Akademik drop -15 Poin.",
                 choices: [
-                    { text: "Bayar bayar cetak modul (Rp25.000)", action: () => {
-                        if(player.posAcad >= 25000) { player.posAcad -= 25000; }
-                        else { player.academic -= 20; alert("Nggak bisa ikut ujian! (Akademik -20)"); }
+                    { text: "Bayar dari Pos Akademik (Rp25.000)", action: () => {
+                        if(player.posAcad >= 25000) { player.posAcad -= 25000; alert("Ujian UTS lancar!"); }
+                        else { player.academic -= 15; alert("Gagal cetak berkas! Nilai Akademik drop -15."); }
                     }}
                 ]
             },
             {
-                title: "Ban Motor Bocor Waktu Buru-buru Ujian",
-                desc: "Kena paku pas mau berangkat ke kampus. Perbaiki di bengkel kena Rp55.000.",
+                title: "Darurat Kendaraan Pas UTS",
+                desc: "Ban motor bocor & kampas rem habis saat buru-buru berangkat ujian UTS (Biaya Rp55.000).",
                 choices: [
-                    { text: "Bayar perbaikan bengkel", action: () => {
-                        if(player.posEmrg >= 55000) { player.posEmrg -= 55000; }
-                        else { player.posSurv -= 55000; player.happiness -= 10; alert("Terpaksa kepotong uang makan! (Mood -10)"); }
+                    { text: "Gunakan Dana Darurat / Proteksi Motor", action: () => {
+                        if(player.hasMotorProt) { alert("🛡️ Tercover Garda Motor! Servis gratis Rp0."); }
+                        else if(player.posEmrg >= 55000) { player.posEmrg -= 55000; alert("Perbaikan dibayar dari Dana Darurat Tunai."); }
+                        else { player.posSurv -= 55000; player.happiness -= 10; alert("Dana Darurat tidak cukup, terpaksa potong uang makan! (Kebahagiaan -10)"); }
                     }}
                 ]
             },
             {
-                title: "KRISIS: Tumbang Demam H-1 UTS",
-                desc: "Kelelahan belajar spartan buat UTS. Badan demam tinggi dan harus ke klinik. Biaya berobat Rp180.000!",
+                title: "KRISIS MEDIS UTS: Tumbang Demam H-1 Ujian",
+                desc: "Tumbang flu berat & demam tinggi saat minggu UTS karena stres & begadan. Harus berobat ke klinik dan beli obat senilai Rp180.000!",
                 choices: [
-                    { text: "Gunakan Proteksi / Dana Darurat", action: () => {
+                    { text: "Eksekusi Solusi Berobat", action: () => {
                         if(player.hasHealthtech) {
-                            alert("KARTU GARDA HEALTHTECH AKTIF! Seluruh biaya klinik ditanggung Astra (Bayar Rp0). Kamu pulih cepat!");
+                            alert("🛡️ KARTU GARDA HEALTHTECH AKTIF! Tagihan Rp180.000 ditanggung penuh oleh Astra (Bayar Rp0). Kamu pulih tepat waktu!");
                             player.health += 5;
                         } else if(player.posEmrg >= 180000) {
-                            player.posEmrg -= 180000;
-                            alert("Dibayar dari dana darurat tunai. Tabungan daruratmu langsung tipis!");
+                            player.posEmrg -= 180000; player.health -= 5;
+                            alert("Dibayar dari Dana Darurat Tunai. Tabungan daruratmu langsung menipis!");
                         } else if(player.posFutu >= 180000) {
-                            player.posFutu -= 180000;
-                            alert("Dana darurat kurang, terpaksa kuras tabungan Pos Future!");
+                            player.posFutu -= 180000; player.health -= 5;
+                            alert("Dana darurat tidak cukup, terpaksa kuras tabungan di Pos Future!");
                         } else {
-                            player.hasPinjol = true;
-                            player.happiness -= 25;
-                            player.health -= 15;
-                            alert("Uang nggak cukup! Terjebak pinjam online cepat cair. Bunga mencekik! (Mood & Sehat Drop)");
+                            player.hasPinjol = true; player.happiness -= 25; player.health -= 15;
+                            alert("❌ UANG TIDAK CUKUP! Terjebak pinjol/utang konsumtif. Kebahagiaan & Kesehatan drop parah!");
                         }
                     }}
                 ]
             }
         ],
-        // Bulan 4: November
+
+        // BULAN 4: NOVEMBER (Literasi Investasi & Event FOMO)
         [
             {
-                title: "Pasar Investasi Reksadana Buka",
-                desc: "Sisa tabunganmu di Pos Future ada. Mau coba dipindahkan ke Reksadana Pasar Uang buat potensi bonus 10%?",
+                title: "Peluang Investasi Reksadana Pasar Uang",
+                desc: "Setelah UTS berlalu, suasana tenang. Pos Future yang aman bisa kamu pindahkan ke Reksadana Pasar Uang (Potensi Bonus +10% di akhir semester).",
                 choices: [
-                    { text: "Pindahkan Rp100.000 ke Reksadana", action: () => {
-                        if(player.posFutu >= 100000) { player.posFutu -= 100000; player.reksadana += 110000; alert("Investasi berhasil!"); }
-                        else { alert("Tabungan Pos Future kamu kurang!"); }
+                    { text: "Pindahkan Rp100.000 dari Pos Future ke Reksadana", action: () => {
+                        if(player.posFutu >= 100000) { player.posFutu -= 100000; player.reksadana += 110000; alert("✅ Berhasil dikembangkan ke Reksadana (+10% Bonus)!"); }
+                        else { alert("Sisa dana Pos Future tidak cukup!"); }
                     }},
-                    { text: "Simpan biasa saja di tabungan", action: () => {} }
+                    { text: "Biarkan tetap di tabungan biasa", action: () => {} }
                 ]
             },
             {
-                title: "Godaan Ajak-ajak Crypto / Skema Cepat Kaya",
-                desc: "Teman kelas pamer hasil 'trading' dan ngajak kamu masuk modal Rp100.000. Tergiur?",
+                title: "Ujian FOMO & Jebakan Finansial",
+                desc: "Teman kampus mengajak ikut trading crypto/skema cepat kaya iming-iming untung 50% sehari, atau godaan paylater/pinjol beli baju acara kampus.",
                 choices: [
-                    { text: "Ikutan mumpung ada uang", action: () => { player.happiness -= 15; alert("Rungkad! Uang hilang, janji manis doang. (Mood -15)"); }},
-                    { text: "Tolak, fokus tabungan aman aja", action: () => { player.happiness += 10; }}
+                    { text: "Tolak FOMO & Tetap Disiplin (Kebahagiaan +10)", action: () => { player.happiness += 10; alert("Keputusan bijak! Kebahagiaan +10."); }},
+                    { text: "Ikut FOMO / Skema Spekulasi", action: () => { player.happiness -= 25; player.posFutu = 0; player.reksadana = 0; alert("🚨 Rungkad! Seluruh tabungan hilang & Kebahagiaan -25 Poin."); }}
                 ]
             },
             {
-                title: "Infaq & Program Berbagi Asrama",
-                desc: "Anak-anak asrama ngadain acara bakti sosial sukarela. Mau donasi Rp20.000?",
+                title: "Sosial Asrama: Program Berbagi Sukarela",
+                desc: "Anak-anak asrama mengadakan program berbagi/infaq sukarela seharga Rp20.000.",
                 choices: [
-                    { text: "Ikut donasi (Rp20.000)", action: () => { if(player.posSurv>=20000){ player.posSurv-=20000; player.happiness+=10; } }},
-                    { text: "Lompati dulu", action: () => {} }
+                    { text: "Ikut Berbagi (Rp20.000 dari Pos Survival)", action: () => { if(player.posSurv >= 20000) { player.posSurv -= 20000; player.happiness += 10; } }},
+                    { text: "Lewati dulu bulan ini", action: () => {} }
                 ]
             }
         ],
-        // Bulan 5: Desember (UAS)
+
+        // BULAN 5: DESEMBER (Pekan UAS & Peak Difficulty)
         [
             {
-                title: "Cetak Jilid Hardcover Tugas Akhir UAS",
-                desc: "Tugas akhir semester wajib dikumpul dalam bentuk cetak hardcover. Biaya Rp60.000.",
+                title: "EVENT KHUSUS UAS: Cetak Jilid Hardcover Praktikum",
+                desc: "Pengumpulan Tugas Akhir Semester & Cetak Jilid Hardcover Praktikum wajib dikumpul (Bayar Rp60.000).",
                 choices: [
-                    { text: "Bayar jilid hardcover (Rp60.000)", action: () => {
+                    { text: "Bayar dari Pos Akademik (Rp60.000)", action: () => {
                         if(player.posAcad >= 60000) { player.posAcad -= 60000; player.academic += 5; }
-                        else { player.academic -= 20; alert("Tugas telat dikumpul! (Akademik -20)"); }
+                        else { player.academic -= 20; alert("Nilai UAS berkurang karena telat cetak!"); }
                     }}
                 ]
             },
             {
-                title: "Laptop Mati Total H-2 Draf UAS",
-                desc: "Laptop tempat ngetik draf UAS mendadak berasap. Servis cepat kena Rp250.000!",
+                title: "KRISIS BESAR UAS: Laptop Mati Total Pas H-2 UAS",
+                desc: "Musibah laptop mati total/kena virus pas H-2 pengumpulan Draf Akhir UAS. Membutuhkan servis cepat Rp250.000!",
                 choices: [
-                    { text: "Servis laptop sekarang", action: () => {
+                    { text: "Bayar Servis Laptop Cepat (Rp250.000)", action: () => {
                         let total = player.posEmrg + player.posFutu;
                         if(total >= 250000) {
                             if(player.posEmrg >= 250000) { player.posEmrg -= 250000; }
                             else { let sisa = 250000 - player.posEmrg; player.posEmrg = 0; player.posFutu -= sisa; }
-                            alert("Laptop beres! Tugas UAS terselamatkan.");
+                            alert("✅ Laptop beres tepat waktu! Draf UAS terselamatkan.");
                         } else {
                             player.academic -= 25; player.happiness -= 20;
-                            alert("Uang nggak cukup! Draf hilang, nilai UAS berantakan.");
+                            alert("❌ Dana tidak cukup! File hilang, UAS berantakan (Akademik -25, Kebahagiaan -20).");
                         }
                     }}
                 ]
             },
             {
-                title: "Tiket Kereta Pulang Kampung Liburan",
-                desc: "Semesteran selesai! Waktunya beli tiket kereta pulang ke rumah seharga Rp150.000.",
+                title: "Persiapan Pulang Kampung Liburan Semester",
+                desc: "Beli tiket kereta/bus liburan semester (Bayar Rp150.000).",
                 choices: [
-                    { text: "Beli tiket dari tabungan", action: () => {
-                        if(player.posFutu >= 150000) { player.posFutu -= 150000; player.happiness += 15; }
-                        else { player.happiness -= 10; alert("Tabungan kurang, terpaksa pinjam kawan dulu."); }
+                    { text: "Beli Tiket dari Tabungan Pos Future (Rp150.000)", action: () => {
+                        if(player.posFutu >= 150000) { player.posFutu -= 150000; player.happiness += 15; alert("Pulang kampung tenang!"); }
+                        else { player.happiness -= 15; alert("Tabungan habis! Terpaksa utang teman (Kebahagiaan drop)."); }
                     }}
                 ]
             }
@@ -509,7 +510,6 @@
     ];
 
     function updateUI() {
-        // Cap status 0 - 100
         player.health = Math.max(0, Math.min(100, player.health));
         player.happiness = Math.max(0, Math.min(100, player.happiness));
         player.academic = Math.max(0, Math.min(100, player.academic));
@@ -552,11 +552,11 @@
         }
 
         if(surv < 100000) {
-            document.getElementById('budgetError').innerText = "Pos Survival minimal Rp100.000 untuk iuran wajib Kas Asrama!";
+            document.getElementById('budgetError').innerText = "Pos Survival minimal Rp100.000 untuk Iuran Kas Wajib Asrama!";
             return;
         }
 
-        player.posSurv += (surv - 100000); // Rp100k langsung kepotong kas
+        player.posSurv += (surv - 100000); // Rp100.000 otomatis kepotong Kas Asrama
         player.posAcad += acad;
         player.posEmrg += emrg;
         player.posFutu += futu;
@@ -564,7 +564,7 @@
         if(surv < 400000) {
             player.health -= 10;
             player.happiness -= 5;
-            alert("Budget makanmu terlalu irit! Kesehatan & Mood agak drop.");
+            alert("Budget makanmu terlalu kecil! Kesehatan & Kebahagiaan agak drop.");
         }
 
         currentEventIdx = 0;
@@ -586,10 +586,9 @@
         }
 
         let ev = events[currentEventIdx];
-        document.getElementById('eventBadge').innerText = `Bulan: ${monthName} (Event ${currentEventIdx + 1}/${events.length})`;
+        document.getElementById('eventBadge').innerText = `${monthName} (Kasus ${currentEventIdx + 1}/${events.length})`;
         
-        let totalTabungan = player.posFutu + player.reksadana;
-        document.getElementById('cashInfo').innerText = `Tabungan: Rp${totalTabungan.toLocaleString('id-ID')}`;
+        document.getElementById('cashInfo').innerText = `Dana Darurat: Rp${player.posEmrg.toLocaleString('id-ID')}`;
 
         document.getElementById('eventTitle').innerText = ev.title;
         document.getElementById('eventDesc').innerText = ev.desc;
@@ -632,19 +631,19 @@
 
         if(finalScore >= 85) {
             title = "👑 FINANCIAL PLANNER MUDA (SANGAT KOMPETEN)";
-            desc = "Keren banget! Kamu bisa menyeimbangkan fisik, pergaulan asrama, nilai kuliah, dan terlindungi dari krisis tanpa utang sama sekali.";
+            desc = "Luar biasa! Kamu berhasil menjaga kesehatan, keharmonisan asrama, nilai perkuliahan tetap tinggi, serta memiliki kesadaran mitigasi risiko yang sangat matang!";
         } else if(finalScore >= 75) {
             title = "🏆 MANAJER KEUANGAN HANDAL (KOMPETEN)";
-            desc = "Pengelolaan uang sakumu oke banget. Cuma sedikit kepotong di jajan luar asrama, tapi keuanganmu stabil!";
+            desc = "Pengelolaan keuanganmu sangat baik. Keuangan tetap stabil walau ada sedikit kompromi pada tabungan akhir.";
         } else if(finalScore >= 60) {
             title = "⚖️ CUKUP SEIMBANG (CUKUP KOMPETEN)";
-            desc = "Kamu berhasil lulus semester tanpa utang, tapi sempat keteteran pas ada krisis medis/fasilitas karena lupa beli asuransi di awal.";
+            desc = "Kamu bertahan tanpa utang, namun sempat keteteran saat krisis fisik/fasilitas karena mengabaikan asuransi di awal semester.";
         } else if(finalScore >= 45) {
             title = "⚠️ KURANG EFISIEN (CENDERUNG RENTAN)";
-            desc = "Tabunganmu ludes dan kesehatan sempat drop gara-gara sering potong uang makan demi hal tidak terduga.";
+            desc = "Tabungan habis dan kesehatan drop akibat sering memotong alokasi uang makan demi kebutuhan terduga.";
         } else {
             title = "🚨 PERLU EVALUASI TOTAL (BELUM KOMPETEN)";
-            desc = "Keuanganmu defisit atau terjebak pinjol. Semester depan coba pakai rumus alokasi 50% Survival, 30% Akademik/Proteksi, dan 20% Tabungan.";
+            desc = "Kamu mengalami defisit keuangan, abai kas asrama, atau terjebak pinjol/utang konsumtif. Terapkan alokasi ideal 50-15-15-20 di semester depan!";
         }
 
         document.getElementById('evalTitle').innerText = title;
@@ -652,10 +651,10 @@
 
         document.getElementById('detailReport').innerHTML = `
             <b>Statistik Akhir ${player.name}:</b><br>
-            • Health: ${player.health} | Mood: ${player.happiness} | Academic: ${player.academic}<br>
-            • Sisa Tabungan Akhir: <b>Rp${totalSavings.toLocaleString('id-ID')}</b><br>
-            • Status Proteksi Astra: <b>${player.hasHealthtech ? 'Terproteksi Garda Healthtech' : 'Tidak Ada'}</b><br>
-            • Status Utang: <b>${player.hasPinjol ? 'Terjebak Pinjol ❌' : 'Bebas Utang ✅'}</b>
+            • Indikator: Kesehatan (${player.health}) | Kebahagiaan (${player.happiness}) | Akademik (${player.academic})<br>
+            • Total Sisa Tabungan & Investasi: <b>Rp${totalSavings.toLocaleString('id-ID')}</b><br>
+            • Status Proteksi Asuransi Astra: <b>${player.hasHealthtech ? 'Aktif (Garda Healthtech)' : 'Tidak Ada'}</b><br>
+            • Status Utang: <b>${player.hasPinjol ? 'Terjebak Pinjol/Utang ❌' : 'Bebas Utang ✅'}</b>
         `;
 
         showScreen('screenReport');
