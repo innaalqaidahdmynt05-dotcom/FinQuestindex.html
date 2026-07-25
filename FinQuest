@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinQuest - Game Kelola Uang Saku Asrama</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #0284c7;
+            --accent-hover: #0369a1;
+            --text-light: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 12px;
+        }
+
+        h1 {
+            color: var(--accent);
+            font-size: 2rem;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: #0f172a;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: var(--text-dim);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #475569;
+            background: #0f172a;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .event-box {
+            background: #0f172a;
+            padding: 16px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+            margin-bottom: 16px;
+        }
+
+        .event-title {
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+
+        .event-desc {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .choice-btn {
+            background: #334155;
+            color: white;
+            border: 1px solid #475569;
+            padding: 10px;
+            border-radius: 6px;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .choice-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .report-card {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+        }
+
+        .score-big {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--success);
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            background: var(--accent);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <header>
+        <h1>FinQuest</h1>
+        <div class="subtitle">Simulasi Kelola Uang Saku & Asrama Mahasiswa</div>
+    </header>
+
+    <!-- Top Status Bar -->
+    <div class="status-bar" id="statusBar">
+        <div class="stat-item">
+            <span class="stat-label">❤️ Kesehatan</span>
+            <span class="stat-value" id="valHealth">100</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">😊 Mood & Sos</span>
+            <span class="stat-value" id="valHappiness">100</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-label">🎓 Akademik</span>
+            <span class="stat-value" id="valAcademic">100</span>
+        </div>
+    </div>
+
+    <!-- SCREEN 1: START -->
+    <div class="screen active" id="screenStart">
+        <h2>Selamat Datang, Anak Asrama! 👋</h2>
+        <p style="margin: 12px 0; font-size: 0.95rem; color: var(--text-dim); line-height: 1.5;">
+            Kamu baru saja menerima <b>uang saku beasiswa Rp900.000/bulan</b>. Kebutuhan fasilitas dasar seperti WiFi, air, dan listrik di asrama sudah gratis ditanggung program. Tugasmu adalah bertahan selama 1 semester (Agustus - Desember) sambil menjaga fisik, nilai kuliah, dan tabungan tetap aman.
+        </p>
+        <div class="input-group">
+            <label for="playerName">Nama Panggilanmu:</label>
+            <input type="text" id="playerName" placeholder="Misal: Budi">
+        </div>
+        <button class="btn" onclick="startGame()">Mulai Petualangan</button>
+    </div>
+
+    <!-- SCREEN 2: ALLOCATE BUDGET -->
+    <div class="screen" id="screenBudget">
+        <h3 id="budgetMonthTitle">Atur Duit Bulan Agustus</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">
+            Total Uang di Tangan: <b>Rp900.000</b>. (Note: Rp100.000 wajib dipakai buat Kas Asrama).
+        </p>
+        <div class="input-group">
+            <label>1. Pos Survival (Makan & Kas Asrama - Min. Rp450.000)</label>
+            <input type="number" id="allocSurv" value="450000">
+        </div>
+        <div class="input-group">
+            <label>2. Pos Akademik & Kampus (Buku, Print, Tugas)</label>
+            <input type="number" id="allocAcad" value="150000">
+        </div>
+        <div class="input-group">
+            <label>3. Pos Proteksi & Dana Darurat</label>
+            <input type="number" id="allocEmrg" value="150000">
+        </div>
+        <div class="input-group">
+            <label>4. Pos Tabungan & Masa Depan</label>
+            <input type="number" id="allocFutu" value="150000">
+        </div>
+        <div id="budgetError" style="color: var(--danger); font-size: 0.85rem; margin-bottom: 8px;"></div>
+        <button class="btn" onclick="submitBudget()">Kunci Anggaran Bulan Ini</button>
+    </div>
+
+    <!-- SCREEN 3: EVENT -->
+    <div class="screen" id="screenEvent">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <span class="badge" id="eventBadge">Bulan 1 - Event 1</span>
+            <span style="font-size: 0.8rem; color: var(--text-dim);" id="cashInfo">Tabungan: Rp0</span>
+        </div>
+        <div class="event-box">
+            <div class="event-title" id="eventTitle">Judul Event</div>
+            <div class="event-desc" id="eventDesc">Deskripsi event...</div>
+            <div id="choiceContainer"></div>
+        </div>
+    </div>
+
+    <!-- SCREEN 4: END REPORT -->
+    <div class="screen" id="screenReport">
+        <h3>🎉 Semester Selesai! Laporan Hasil Keuangan</h3>
+        <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 12px;">Berikut adalah hasil perjuanganmu selama 5 bulan mengelola uang saku di asrama:</p>
+        <div class="report-card">
+            <div style="text-align: center; font-size: 0.9rem; color: var(--text-dim);" id="evalTitle">TINGKAT EVALUASI</div>
+            <div class="score-big" id="finalScore">0</div>
+            <p id="evalDesc" style="font-size: 0.9rem; line-height: 1.4; margin-bottom: 12px;"></p>
+            <hr style="border-color: #334155; margin: 12px 0;">
+            <div style="font-size: 0.85rem; line-height: 1.6;" id="detailReport"></div>
+        </div>
+        <button class="btn" style="margin-top: 16px;" onclick="location.reload()">Main Lagi dari Awal</button>
+    </div>
+</div>
+
+<script>
+    // State Game
+    let player = {
+        name: "Awardee",
+        health: 100,
+        happiness: 100,
+        academic: 100,
+        posSurv: 0,
+        posAcad: 0,
+        posEmrg: 0,
+        posFutu: 0,
+        hasHealthtech: false,
+        hasMotorProt: false,
+        reksadana: 0,
+        hasPinjol: false
+    };
+
+    let currentMonthIdx = 0;
+    let currentEventIdx = 0;
+
+    const months = ["Agustus", "September", "Oktober (UTS)", "November", "Desember (UAS)"];
+
+    // Daftar Multi-Event per Bulan
+    const monthEvents = [
+        // Bulan 1: Agustus
+        [
+            {
+                title: "Pasar Proteksi Astra (Khusus Bulan Pertama)",
+                desc: "Mumpung awal semester, ada penawaran proteksi kesehatan mikro (Garda Healthtech - Rp30.000/sem). Beli sekarang biar tenang?",
+                choices: [
+                    { text: "Beli Garda Healthtech (Rp30.000 dari Pos Darurat)", action: () => {
+                        if(player.posEmrg >= 30000) { player.posEmrg -= 30000; player.hasHealthtech = true; alert("Mantap! Proteksi kesehatan aktif selama 1 semester."); }
+                        else { alert("Uang Pos Daruratmu kurang!"); }
+                    }},
+                    { text: "Lompati, tidak usah beli dulu", action: () => {} }
+                ]
+            },
+            {
+                title: "Diajak Nongkrong Anak Angkatan",
+                desc: "Anak-anak kelas ngajak ngopi di kafe hits habis kuliah. Bayar sekitar Rp45.000. Ikut nggak?",
+                choices: [
+                    { text: "Ikut nongkrong (Pakai uang makan Rp45.000)", action: () => {
+                        if(player.posSurv >= 45000) { player.posSurv -= 45000; player.happiness += 10; }
+                        else { player.happiness -= 5; alert("Uang makan pas-pasan, mending skip."); }
+                    }},
+                    { text: "Tolak halus, mending makan di asrama", action: () => { player.happiness -= 5; }}
+                ]
+            },
+            {
+                title: "Adaptasi Cuaca Asrama",
+                desc: "Gara-gara cuaca gonta-ganti, tenggorokan mulai radang. Perlu beli obat toko seharga Rp15.000.",
+                choices: [
+                    { text: "Obati langsung", action: () => {
+                        if(player.hasHealthtech) { alert("Cover Asuransi! Biaya obat gratis Rp0."); }
+                        else if(player.posEmrg >= 15000) { player.posEmrg -= 15000; }
+                        else { player.health -= 10; alert("Nggak ada uang darurat, ditahan deh sakitnya. (Health -10)"); }
+                    }}
+                ]
+            }
+        ],
+        // Bulan 2: September
+        [
+            {
+                title: "Tugas Kelompok Praktikum",
+                desc: "Ada tugas kelompok bikin laporan cetak & butuh kuota tambahan buat Zoom malam. Total Rp35.000.",
+                choices: [
+                    { text: "Bayar pakai Pos Akademik", action: () => {
+                        if(player.posAcad >= 35000) { player.posAcad -= 35000; }
+                        else { player.academic -= 15; alert("Uang akademik habis! Nilai tugas minus. (Akademik -15)"); }
+                    }}
+                ]
+            },
+            {
+                title: "Patungan Alat Asrama Rusak",
+                desc: "Pompa air asrama mendadak mati. Anak-anak asrama sepakat patungan Rp25.000 per orang.",
+                choices: [
+                    { text: "Bayar patungan dari Dana Darurat", action: () => {
+                        if(player.posEmrg >= 25000) { player.posEmrg -= 25000; player.happiness += 5; }
+                        else { player.happiness -= 15; alert("Nggak bisa bayar patungan, bikin canggung sama anak asrama. (Mood -15)"); }
+                    }}
+                ]
+            },
+            {
+                title: "Cucian Baju Menumpuk",
+                desc: "Jadwal kuliah padat banget minggu ini, baju kotor numpuk. Mau laundry express (Rp30.000) atau cuci sendiri?",
+                choices: [
+                    { text: "Laundry Express (Rp30.000 dari Pos Makan)", action: () => { if(player.posSurv>=30000) player.posSurv-=30000; else player.health-=5; }},
+                    { text: "Cuci sendiri aja malam-malam", action: () => { player.health -= 5; }}
+                ]
+            }
+        ],
+        // Bulan 3: Oktober (UTS)
+        [
+            {
+                title: "Cetak Modul Ujian UTS Mendadak",
+                desc: "Dosen minta lembar kerja khusus dikumpul saat UTS besok pagi. Biaya cetak Rp25.000.",
+                choices: [
+                    { text: "Bayar bayar cetak modul (Rp25.000)", action: () => {
+                        if(player.posAcad >= 25000) { player.posAcad -= 25000; }
+                        else { player.academic -= 20; alert("Nggak bisa ikut ujian! (Akademik -20)"); }
+                    }}
+                ]
+            },
+            {
+                title: "Ban Motor Bocor Waktu Buru-buru Ujian",
+                desc: "Kena paku pas mau berangkat ke kampus. Perbaiki di bengkel kena Rp55.000.",
+                choices: [
+                    { text: "Bayar perbaikan bengkel", action: () => {
+                        if(player.posEmrg >= 55000) { player.posEmrg -= 55000; }
+                        else { player.posSurv -= 55000; player.happiness -= 10; alert("Terpaksa kepotong uang makan! (Mood -10)"); }
+                    }}
+                ]
+            },
+            {
+                title: "KRISIS: Tumbang Demam H-1 UTS",
+                desc: "Kelelahan belajar spartan buat UTS. Badan demam tinggi dan harus ke klinik. Biaya berobat Rp180.000!",
+                choices: [
+                    { text: "Gunakan Proteksi / Dana Darurat", action: () => {
+                        if(player.hasHealthtech) {
+                            alert("KARTU GARDA HEALTHTECH AKTIF! Seluruh biaya klinik ditanggung Astra (Bayar Rp0). Kamu pulih cepat!");
+                            player.health += 5;
+                        } else if(player.posEmrg >= 180000) {
+                            player.posEmrg -= 180000;
+                            alert("Dibayar dari dana darurat tunai. Tabungan daruratmu langsung tipis!");
+                        } else if(player.posFutu >= 180000) {
+                            player.posFutu -= 180000;
+                            alert("Dana darurat kurang, terpaksa kuras tabungan Pos Future!");
+                        } else {
+                            player.hasPinjol = true;
+                            player.happiness -= 25;
+                            player.health -= 15;
+                            alert("Uang nggak cukup! Terjebak pinjam online cepat cair. Bunga mencekik! (Mood & Sehat Drop)");
+                        }
+                    }}
+                ]
+            }
+        ],
+        // Bulan 4: November
+        [
+            {
+                title: "Pasar Investasi Reksadana Buka",
+                desc: "Sisa tabunganmu di Pos Future ada. Mau coba dipindahkan ke Reksadana Pasar Uang buat potensi bonus 10%?",
+                choices: [
+                    { text: "Pindahkan Rp100.000 ke Reksadana", action: () => {
+                        if(player.posFutu >= 100000) { player.posFutu -= 100000; player.reksadana += 110000; alert("Investasi berhasil!"); }
+                        else { alert("Tabungan Pos Future kamu kurang!"); }
+                    }},
+                    { text: "Simpan biasa saja di tabungan", action: () => {} }
+                ]
+            },
+            {
+                title: "Godaan Ajak-ajak Crypto / Skema Cepat Kaya",
+                desc: "Teman kelas pamer hasil 'trading' dan ngajak kamu masuk modal Rp100.000. Tergiur?",
+                choices: [
+                    { text: "Ikutan mumpung ada uang", action: () => { player.happiness -= 15; alert("Rungkad! Uang hilang, janji manis doang. (Mood -15)"); }},
+                    { text: "Tolak, fokus tabungan aman aja", action: () => { player.happiness += 10; }}
+                ]
+            },
+            {
+                title: "Infaq & Program Berbagi Asrama",
+                desc: "Anak-anak asrama ngadain acara bakti sosial sukarela. Mau donasi Rp20.000?",
+                choices: [
+                    { text: "Ikut donasi (Rp20.000)", action: () => { if(player.posSurv>=20000){ player.posSurv-=20000; player.happiness+=10; } }},
+                    { text: "Lompati dulu", action: () => {} }
+                ]
+            }
+        ],
+        // Bulan 5: Desember (UAS)
+        [
+            {
+                title: "Cetak Jilid Hardcover Tugas Akhir UAS",
+                desc: "Tugas akhir semester wajib dikumpul dalam bentuk cetak hardcover. Biaya Rp60.000.",
+                choices: [
+                    { text: "Bayar jilid hardcover (Rp60.000)", action: () => {
+                        if(player.posAcad >= 60000) { player.posAcad -= 60000; player.academic += 5; }
+                        else { player.academic -= 20; alert("Tugas telat dikumpul! (Akademik -20)"); }
+                    }}
+                ]
+            },
+            {
+                title: "Laptop Mati Total H-2 Draf UAS",
+                desc: "Laptop tempat ngetik draf UAS mendadak berasap. Servis cepat kena Rp250.000!",
+                choices: [
+                    { text: "Servis laptop sekarang", action: () => {
+                        let total = player.posEmrg + player.posFutu;
+                        if(total >= 250000) {
+                            if(player.posEmrg >= 250000) { player.posEmrg -= 250000; }
+                            else { let sisa = 250000 - player.posEmrg; player.posEmrg = 0; player.posFutu -= sisa; }
+                            alert("Laptop beres! Tugas UAS terselamatkan.");
+                        } else {
+                            player.academic -= 25; player.happiness -= 20;
+                            alert("Uang nggak cukup! Draf hilang, nilai UAS berantakan.");
+                        }
+                    }}
+                ]
+            },
+            {
+                title: "Tiket Kereta Pulang Kampung Liburan",
+                desc: "Semesteran selesai! Waktunya beli tiket kereta pulang ke rumah seharga Rp150.000.",
+                choices: [
+                    { text: "Beli tiket dari tabungan", action: () => {
+                        if(player.posFutu >= 150000) { player.posFutu -= 150000; player.happiness += 15; }
+                        else { player.happiness -= 10; alert("Tabungan kurang, terpaksa pinjam kawan dulu."); }
+                    }}
+                ]
+            }
+        ]
+    ];
+
+    function updateUI() {
+        // Cap status 0 - 100
+        player.health = Math.max(0, Math.min(100, player.health));
+        player.happiness = Math.max(0, Math.min(100, player.happiness));
+        player.academic = Math.max(0, Math.min(100, player.academic));
+
+        document.getElementById('valHealth').innerText = player.health;
+        document.getElementById('valHappiness').innerText = player.happiness;
+        document.getElementById('valAcademic').innerText = player.academic;
+    }
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        updateUI();
+    }
+
+    function startGame() {
+        let nameInput = document.getElementById('playerName').value;
+        if(nameInput.trim() !== "") player.name = nameInput;
+        currentMonthIdx = 0;
+        startMonthBudget();
+    }
+
+    function startMonthBudget() {
+        document.getElementById('budgetMonthTitle').innerText = `Atur Anggaran Bulan ${months[currentMonthIdx]}`;
+        document.getElementById('budgetError').innerText = "";
+        showScreen('screenBudget');
+    }
+
+    function submitBudget() {
+        let surv = parseInt(document.getElementById('allocSurv').value) || 0;
+        let acad = parseInt(document.getElementById('allocAcad').value) || 0;
+        let emrg = parseInt(document.getElementById('allocEmrg').value) || 0;
+        let futu = parseInt(document.getElementById('allocFutu').value) || 0;
+
+        let total = surv + acad + emrg + futu;
+
+        if(total !== 900000) {
+            document.getElementById('budgetError').innerText = `Total alokasimu Rp${total.toLocaleString('id-ID')}. Harus pas Rp900.000!`;
+            return;
+        }
+
+        if(surv < 100000) {
+            document.getElementById('budgetError').innerText = "Pos Survival minimal Rp100.000 untuk iuran wajib Kas Asrama!";
+            return;
+        }
+
+        player.posSurv += (surv - 100000); // Rp100k langsung kepotong kas
+        player.posAcad += acad;
+        player.posEmrg += emrg;
+        player.posFutu += futu;
+
+        if(surv < 400000) {
+            player.health -= 10;
+            player.happiness -= 5;
+            alert("Budget makanmu terlalu irit! Kesehatan & Mood agak drop.");
+        }
+
+        currentEventIdx = 0;
+        loadEvent();
+    }
+
+    function loadEvent() {
+        let monthName = months[currentMonthIdx];
+        let events = monthEvents[currentMonthIdx];
+
+        if(currentEventIdx >= events.length) {
+            currentMonthIdx++;
+            if(currentMonthIdx >= months.length) {
+                finishGame();
+            } else {
+                startMonthBudget();
+            }
+            return;
+        }
+
+        let ev = events[currentEventIdx];
+        document.getElementById('eventBadge').innerText = `Bulan: ${monthName} (Event ${currentEventIdx + 1}/${events.length})`;
+        
+        let totalTabungan = player.posFutu + player.reksadana;
+        document.getElementById('cashInfo').innerText = `Tabungan: Rp${totalTabungan.toLocaleString('id-ID')}`;
+
+        document.getElementById('eventTitle').innerText = ev.title;
+        document.getElementById('eventDesc').innerText = ev.desc;
+
+        let container = document.getElementById('choiceContainer');
+        container.innerHTML = "";
+
+        ev.choices.forEach((c) => {
+            let btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.innerText = c.text;
+            btn.onclick = () => {
+                c.action();
+                currentEventIdx++;
+                loadEvent();
+            };
+            container.appendChild(btn);
+        });
+
+        showScreen('screenEvent');
+    }
+
+    function finishGame() {
+        let totalSavings = player.posFutu + player.reksadana;
+        let savingsScore = 0;
+
+        if(player.hasPinjol) savingsScore = 0;
+        else if(totalSavings >= 400000) savingsScore = 100;
+        else if(totalSavings >= 200000) savingsScore = 75;
+        else if(totalSavings >= 100000) savingsScore = 50;
+        else savingsScore = 25;
+
+        let avgInd = (player.health + player.happiness + player.academic) / 3.0;
+        let finalScore = Math.round((avgInd * 0.6) + (savingsScore * 0.4));
+
+        document.getElementById('finalScore').innerText = `${finalScore} / 100`;
+
+        let title = "";
+        let desc = "";
+
+        if(finalScore >= 85) {
+            title = "👑 FINANCIAL PLANNER MUDA (SANGAT KOMPETEN)";
+            desc = "Keren banget! Kamu bisa menyeimbangkan fisik, pergaulan asrama, nilai kuliah, dan terlindungi dari krisis tanpa utang sama sekali.";
+        } else if(finalScore >= 75) {
+            title = "🏆 MANAJER KEUANGAN HANDAL (KOMPETEN)";
+            desc = "Pengelolaan uang sakumu oke banget. Cuma sedikit kepotong di jajan luar asrama, tapi keuanganmu stabil!";
+        } else if(finalScore >= 60) {
+            title = "⚖️ CUKUP SEIMBANG (CUKUP KOMPETEN)";
+            desc = "Kamu berhasil lulus semester tanpa utang, tapi sempat keteteran pas ada krisis medis/fasilitas karena lupa beli asuransi di awal.";
+        } else if(finalScore >= 45) {
+            title = "⚠️ KURANG EFISIEN (CENDERUNG RENTAN)";
+            desc = "Tabunganmu ludes dan kesehatan sempat drop gara-gara sering potong uang makan demi hal tidak terduga.";
+        } else {
+            title = "🚨 PERLU EVALUASI TOTAL (BELUM KOMPETEN)";
+            desc = "Keuanganmu defisit atau terjebak pinjol. Semester depan coba pakai rumus alokasi 50% Survival, 30% Akademik/Proteksi, dan 20% Tabungan.";
+        }
+
+        document.getElementById('evalTitle').innerText = title;
+        document.getElementById('evalDesc').innerText = desc;
+
+        document.getElementById('detailReport').innerHTML = `
+            <b>Statistik Akhir ${player.name}:</b><br>
+            • Health: ${player.health} | Mood: ${player.happiness} | Academic: ${player.academic}<br>
+            • Sisa Tabungan Akhir: <b>Rp${totalSavings.toLocaleString('id-ID')}</b><br>
+            • Status Proteksi Astra: <b>${player.hasHealthtech ? 'Terproteksi Garda Healthtech' : 'Tidak Ada'}</b><br>
+            • Status Utang: <b>${player.hasPinjol ? 'Terjebak Pinjol ❌' : 'Bebas Utang ✅'}</b>
+        `;
+
+        showScreen('screenReport');
+    }
+</script>
+
+</body>
+</html>
