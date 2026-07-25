@@ -1,0 +1,385 @@
+import sys
+import time
+
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.allowance = 900000
+        self.cash = 0
+        
+        # Indikator Utama (Skala 0 - 100)
+        self.health = 100
+        self.happiness = 100
+        self.academic = 100
+        
+        # Alokasi Pos Anggaran
+        self.pos_survival = 0    # Makan & Kas Asrama
+        self.pos_academic = 0    # Modul, Cetak Tugas, Kas Himpunan
+        self.pos_emergency = 0   # Dana Darurat Tunai
+        self.pos_future = 0      # Tabungan / Investasi
+        
+        # Status Aset & Proteksi
+        self.has_garda_healthtech = False
+        self.has_garda_motor = False
+        self.reksadana_amount = 0
+        self.has_pinjol = False
+
+    def cap_stats(self):
+        self.health = max(0, min(100, self.health))
+        self.happiness = max(0, min(100, self.happiness))
+        self.academic = max(0, min(100, self.academic))
+
+    def print_status(self):
+        print("\n" + "="*50)
+        print(f" 📊 STATUS FINQUEST: {self.name.upper()}")
+        print("="*50)
+        print(f" ❤️ Kesehatan  : {self.health}/100")
+        print(f" 😊 Kebahagiaan: {self.happiness}/100")
+        print(f" 🎓 Akademik   : {self.academic}/100")
+        print("-" * 50)
+        print(f" 💵 Cash Tangan : Rp{self.cash:,}")
+        print(f" 🛡️ Garda Health: {'AKTIF' if self.has_garda_healthtech else 'TIDAK ADA'}")
+        print(f" 🛡️ Garda Motor : {'AKTIF' if self.has_garda_motor else 'TIDAK ADA'}")
+        print(f" 📈 Reksadana   : Rp{self.reksadana_amount:,}")
+        print(f" 💰 Total Tabungan (Pos Future): Rp{self.pos_future:,}")
+        print("="*50 + "\n")
+
+class FinQuestGame:
+    def __init__(self):
+        self.player = None
+        self.months = ["Agustus", "September", "Oktober (UTS)", "November", "Desember (UAS)"]
+
+    def banner(self):
+        print("""
+  =======================================================
+   ██████╗ ██╗███╗   ██╗██████╗ ██╗   ██╗███████╗████████╗
+   ██╔════╝ ██║████╗  ██║██╔══██╗██║   ██║██╔════╝╚══██╔══╝
+   █████╗   ██║██╔██╗ ██║██║  ██║██║   ██║█████╗     ██║   
+   ██╔══╝   ██║██║╚██╗██║██║  ██║██║   ██║██╔══╝     ██║   
+   ██║      ██║██║ ╚████║██████╔╝╚██████╔╝███████╗   ██║   
+   ╚═╝      ╚═╝╚═╝  ╚═══╝╚═════╝  ╚═════╝ ╚══════╝   ╚═╝   
+             BRIGHT SCHOLARSHIP FINANCIAL GAME          
+  =======================================================
+        """)
+
+    def allocate_budget(self, month_name):
+        print(f"\n💵 [ALOKASI ANGGARAN BULAN {month_name.upper()}]")
+        print("Uang saku bulanan Bright Scholarship masuk: Rp900.000")
+        self.player.cash += self.player.allowance
+        
+        print("\nSusun alokasi 4 Pos Anggaranmu untuk bulan ini:")
+        print("Catatan: Kas Wajib Asrama adalah Rp100.000 (Potong Pos Survival)")
+        
+        while True:
+            try:
+                surv = int(input("1. Pos Survival (Min. Rp450k untuk Kas Rp100k + Makan) : Rp"))
+                acad = int(input("2. Pos Akademik & Organisasi                        : Rp"))
+                emrg = int(input("3. Pos Proteksi & Darurat                           : Rp"))
+                futu = int(input("4. Pos Future (Tabungan)                            : Rp"))
+                
+                total = surv + acad + emrg + futu
+                if total != self.player.cash:
+                    print(f"\n⚠️ Total alokasi (Rp{total:,}) tidak sama dengan cashmu (Rp{self.player.cash:,})! Ulangi.")
+                    continue
+                
+                if surv < 100000:
+                    print("\n⚠️ Pos Survival minimal Rp100.000 untuk bayar Kas Asrama Wajib!")
+                    continue
+                
+                self.player.pos_survival = surv - 100000  # Rp100k langsung kepotong Kas Asrama
+                self.player.pos_academic += acad
+                self.player.pos_emergency += emrg
+                self.player.pos_future += futu
+                self.player.cash = 0
+                
+                print(f"\n✅ Anggaran Berhasil Disusun! Rp100.000 otomatis terbayar untuk Kas Asrama.")
+                if surv < 400000:
+                    print("⚠️ Budget makan terlalu kecil! Risiko indikator kesehatan turun.")
+                    self.player.health -= 10
+                    self.player.happiness -= 5
+                break
+            except ValueError:
+                print("⚠️ Masukkan angka yang valid!")
+
+    def month_august(self):
+        print("\n📌 --- BULAN 1: AGUSTUS (Adaptasi, Budgeting & Proteksi) ---")
+        self.allocate_budget("Agustus")
+        
+        # Pasar Proteksi Astra
+        print("\n🛡️ [PASAR PROTEKSI ASTRA BUKA (SPECIAL AGUSTUS)]")
+        print("Mumpung awal semester, lindungi dirimu dengan Asuransi Astra Mikro:")
+        print("1. Garda Healthtech (Rp30.000 / semester) -> Cover Biaya Berobat Sakit")
+        print("2. Garda Motor (Rp20.000 / semester)      -> Cover Perbaikan Motor")
+        print("3. Tidak beli dulu")
+        
+        choice = input("Pilih proteksi (misal 1 / 1,2 / 3): ").strip()
+        if "1" in choice and self.player.pos_emergency >= 30000:
+            self.player.pos_emergency -= 30000
+            self.player.has_garda_healthtech = True
+            print("✅ Garda Healthtech Aktif!")
+        if "2" in choice and self.player.pos_emergency >= 20000:
+            self.player.pos_emergency -= 20000
+            self.player.has_garda_motor = True
+            print("✅ Garda Motor Aktif!")
+            
+        # Multi-Events
+        print("\n🎴 [EVENT 1/3] Diajak nongkrong angkatan di kafe hits (Bayar Rp45.000)")
+        print("1. Ikut nongkrong (Pakai Pos Survival)")
+        print("2. Skip nongkrong & fokus asrama")
+        e1 = input("Pilihanmu (1/2): ")
+        if e1 == "1" and self.player.pos_survival >= 45000:
+            self.player.pos_survival -= 45000
+            self.player.happiness += 10
+        else:
+            self.player.happiness -= 5
+
+        print("\n🎴 [EVENT 2/3] Beli Buku Teks Utama Dosen (Bayar Rp50.000)")
+        if self.player.pos_academic >= 50000:
+            self.player.pos_academic -= 50000
+            self.player.academic += 5
+            print("✅ Dibayar via Pos Akademik.")
+        else:
+            print("❌ Uang Pos Akademik kurang! Akademik -15 Poin.")
+            self.player.academic -= 15
+
+        print("\n🎴 [EVENT 3/3] Adaptasi cuaca asrama bikin radang (Obat Rp15.000)")
+        if self.player.has_garda_healthtech:
+            print("🛡️ Garda Healthtech Aktif! Obat dicover penuh oleh Astra (Bayar Rp0).")
+        elif self.player.pos_emergency >= 15000:
+            self.player.pos_emergency -= 15000
+            print("✅ Dibayar via Dana Darurat Tunai.")
+        else:
+            self.player.health -= 10
+            print("❌ Tidak ada dana darurat! Kesehatan -10 Poin.")
+
+    def month_september(self):
+        print("\n📌 --- BULAN 2: SEPTEMBER (Dinamika Organisasi & Asrama) ---")
+        self.allocate_budget("September")
+        
+        print("\n🎴 [EVENT 1/3] Tugas Kelompok & Print Laporan (Rp35.000)")
+        if self.player.pos_academic >= 35000:
+            self.player.pos_academic -= 35000
+            print("✅ Dibayar dari Pos Akademik.")
+        else:
+            self.player.academic -= 10
+            print("❌ Uang Pos Akademik kurang! Nilai Akademik -10.")
+
+        print("\n🎴 [EVENT 2/3] Patungan Darurat Asrama Kompor/Pompa Air Rusak (Rp25.000)")
+        if self.player.pos_emergency >= 25000:
+            self.player.pos_emergency -= 25000
+            self.player.happiness += 5
+            print("✅ Dibayar dari Dana Darurat. Hubungan asrama makin harmonis!")
+        else:
+            self.player.happiness -= 15
+            print("❌ Tidak bisa patungan! Konflik dengan anak asrama (Kebahagiaan -15).")
+
+        print("\n🎴 [EVENT 3/3] Cucian Baju Menumpuk Karena Sibuk Organisasi")
+        print("1. Laundry Express (Rp30.000 dari Pos Survival)")
+        print("2. Cuci Sendiri di Asrama (Hemat Rp0, Capek)")
+        e3 = input("Pilihan (1/2): ")
+        if e3 == "1" and self.player.pos_survival >= 30000:
+            self.player.pos_survival -= 30000
+            self.player.health += 5
+        else:
+            self.player.health -= 5
+
+    def month_october(self):
+        print("\n📌 --- BULAN 3: OKTOBER (Pekan UTS & Simulasi Krisis) ---")
+        self.allocate_budget("Oktober")
+        
+        print("\n🎴 [EVENT 1/3 - UTS] Cetak Lembar Kerja Ujian Praktikum Mendadak (Rp25.000)")
+        if self.player.pos_academic >= 25000:
+            self.player.pos_academic -= 25000
+            print("✅ Lembar ujian tercetak! Akademik aman.")
+        else:
+            self.player.academic -= 20
+            print("❌ Gagal cetak lembar ujian! Akademik -20 Poin.")
+
+        print("\n🎴 [EVENT 2/3] Ban Motor Bocor Pas Buru-Buru Ujian UTS (Rp55.000)")
+        if self.player.has_garda_motor:
+            print("🛡️ Garda Motor Aktif! Diderek & klaim perbaikan Astra (Bayar Rp0).")
+        elif self.player.pos_emergency >= 55000:
+            self.player.pos_emergency -= 55000
+            print("✅ Dibayar dari Dana Darurat Tunai.")
+        else:
+            self.player.pos_survival -= 55000
+            self.player.happiness -= 10
+            print("❌ Dana darurat tidak cukup! Terpaksa potong uang makan (Kebahagiaan -10).")
+
+        print("\n🎴 [EVENT 3/3 - KRISIS MEDIS UTS] Tumbang Demam H-1 UTS (Biaya Klinik Rp180.000)")
+        if self.player.has_garda_healthtech:
+            print("🛡️ SAVED BY ASTRA! Garda Healthtech menanggung biaya clinic Rp180.000 (Bayar Rp0).")
+            self.player.health += 5
+            self.player.happiness += 10
+        elif self.player.pos_emergency >= 180000:
+            self.player.pos_emergency -= 180000
+            print("✅ Dibayar penuh dari Dana Darurat Tunai.")
+        else:
+            print("🚨 DANA DARURAT TIDAK CUKUP!")
+            print("1. Ambil dari Tabungan Pos Future")
+            print("2. Terjebak Pinjol Cepat Cair")
+            e3 = input("Pilih solusi darurat (1/2): ")
+            if e3 == "1" and self.player.pos_future >= 180000:
+                self.player.pos_future -= 180000
+                print("⚠️ Tabungan Pos Future terpaksa terkuras Rp180.000.")
+            else:
+                self.player.has_pinjol = True
+                self.player.happiness -= 25
+                self.player.health -= 15
+                print("❌ Kena jebakan Pinjol! Bunga membengkak, Kebahagiaan & Kesehatan drop parah!")
+
+    def month_november(self):
+        print("\n📌 --- BULAN 4: NOVEMBER (Literasi Investasi & Ujian FOMO) ---")
+        self.allocate_budget("November")
+        
+        print("\n📈 [PASAR INVESTASI BUKA]")
+        print(f"Sisa Tabungan di Pos Future saat ini: Rp{self.player.pos_future:,}")
+        if self.player.pos_future > 0:
+            inv = input("Berapa yang mau dipindahkan ke Reksadana Pasar Uang? Rp")
+            try:
+                inv_val = int(inv)
+                if inv_val <= self.player.pos_future:
+                    self.player.pos_future -= inv_val
+                    self.player.reksadana_amount += int(inv_val * 1.10) # Return +10%
+                    print(f"✅ Berhasil! Rp{inv_val:,} diinvestasikan di Reksadana (Proyeksi Bonus +10%).")
+            except ValueError:
+                pass
+
+        print("\n🎴 [EVENT 1/3] Ajak Crypto/Skema Cepat Kaya dari Teman Kampus")
+        print("1. Ikut Crypto (Spekulasi Rp100.000)")
+        print("2. Menolak halus & tetap di Reksadana/Tabungan")
+        e1 = input("Pilihan (1/2): ")
+        if e1 == "1":
+            print("❌ Rugi Crypto/Rungkad! Uang Rp100.000 hilang. Kebahagiaan -15.")
+            self.player.happiness -= 15
+        else:
+            self.player.happiness += 10
+            print("✅ Bijak! Menghindari judi terselubung. Kebahagiaan +10.")
+
+        print("\n🎴 [EVENT 2/3] Program Berbagi Infaq Asrama Bright Scholarship (Rp20.000)")
+        if self.player.pos_survival >= 20000:
+            self.player.pos_survival -= 20000
+            self.player.happiness += 10
+            print("✅ Berbagi kebaikan. Kebahagiaan +10 Poin.")
+
+        print("\n🎴 [EVENT 3/3] Cetak Modul Persiapan UAS (Rp30.000)")
+        if self.player.pos_academic >= 30000:
+            self.player.pos_academic -= 30000
+            print("✅ Dibayar dari Pos Akademik.")
+        else:
+            self.player.academic -= 10
+
+    def month_december(self):
+        print("\n📌 --- BULAN 5: DESEMBER (Pekan UAS & Peak Difficulty) ---")
+        self.allocate_budget("Desember")
+        
+        print("\n🎴 [EVENT 1/3 - UAS] Cetak & Jilid Hardcover Tugas Akhir Semester (Rp60.000)")
+        if self.player.pos_academic >= 60000:
+            self.player.pos_academic -= 60000
+            print("✅ Tugas Akhir terjilid rapi! Akademik +5.")
+            self.player.academic += 5
+        else:
+            self.player.academic -= 20
+            print("❌ Gagal jilid hardcover tepat waktu! Akademik -20 Poin.")
+
+        print("\n🎴 [EVENT 2/3 - KRISIS BESAR] Servis Laptop Mati Total H-2 Draf UAS (Rp250.000)")
+        total_darurat = self.player.pos_emergency + self.player.pos_future
+        if total_darurat >= 250000:
+            if self.player.pos_emergency >= 250000:
+                self.player.pos_emergency -= 250000
+            else:
+                sisa = 250000 - self.player.pos_emergency
+                self.player.pos_emergency = 0
+                self.player.pos_future -= sisa
+            print("✅ Servis laptop selesai! Tugas UAS terselamatkan berkat Dana Darurat/Tabungan.")
+        else:
+            self.player.academic -= 25
+            self.player.happiness -= 20
+            print("❌ Dana tidak cukup! File hilang, UAS berantakan (Akademik -25, Kebahagiaan -20).")
+
+        print("\n🎴 [EVENT 3/3] Tiket Pulang Kampung Liburan Semester (Rp150.000)")
+        if self.player.pos_future >= 150000:
+            self.player.pos_future -= 150000
+            self.player.happiness += 15
+            print("✅ Tiket kereta terbeli dari tabungan! Pulang kampung tenang.")
+        else:
+            self.player.happiness -= 10
+            print("⚠️ Tabungan kurang. Harus pinjam teman/tidak bisa pulang kampung tepat waktu.")
+
+    def evaluate_game(self):
+        self.player.cap_stats()
+        
+        # Total Wealth Calculation
+        total_savings = self.player.pos_future + self.player.reksadana_amount
+        
+        if self.player.has_pinjol:
+            savings_score = 0
+        elif total_savings >= 400000:
+            savings_score = 100
+        elif total_savings >= 200000:
+            savings_score = 75
+        elif total_savings >= 100000:
+            savings_score = 50
+        else:
+            savings_score = 25
+            
+        avg_indicator = (self.player.health + self.player.happiness + self.player.academic) / 3.0
+        final_score = (avg_indicator * 0.6) + (savings_score * 0.4)
+        
+        print("\n" + "="*60)
+        print(" 🎓 RAPOR EVALUASI FINQUEST - BRIGHT SCHOLARSHIP EDITION")
+        print("="*60)
+        print(f" Nama Player        : {self.player.name}")
+        print(f" Rata-rata Indikator: {avg_indicator:.1f} / 100 (Bobot 60%)")
+        print(f" Sisa Tabungan      : Rp{total_savings:,} (Skor Tabungan: {savings_score}/100 - Bobot 40%)")
+        print(f" Status Pinjol      : {'ADA UTANG PINJOL' if self.player.has_pinjol else 'BEBAS UTANG'}")
+        print("-" * 60)
+        print(f" 🏆 TOTAL SKOR FINQUEST: {final_score:.1f} / 100")
+        print("-" * 60)
+        
+        if final_score >= 85:
+            print(" 👑 TINGKAT 1: FINANCIAL PLANNER MUDA (SANGAT KOMPETEN)")
+            print(" Evaluasi: Mampu menjaga kesehatan, hubungan asrama, akademik tinggi, & siap terproteksi Asuransi Astra!")
+        elif final_score >= 75:
+            print(" 🏆 TINGKAT 2: MANAJER KEUANGAN HANDAL (KOMPETEN)")
+            print(" Evaluasi: Pengelolaan keuangan baik, namun tabungan sedikit tergerus konsumsi rekreasi.")
+        elif final_score >= 60:
+            print(" ⚖️ TINGKAT 3: CUKUP SEIMBANG (CUKUP KOMPETEN)")
+            print(" Evaluasi: Bertahan tanpa utang, namun sempat keteteran saat krisis karena kurang proteksi.")
+        elif final_score >= 45:
+            print(" ⚠️ TINGKAT 4: KURANG EFISIEN (CENDERUNG RENTAN)")
+            print(" Evaluasi: Tabungan habis & kesehatan terganggu akibat sering memotong alokasi makan.")
+        else:
+            print(" 🚨 TINGKAT 5: PERLU EVALUASI TOTAL (BELUM KOMPETEN)")
+            print(" Evaluasi: Defisit keuangan, abai kas asrama, atau terjebak pinjol. Terapkan rumus 50-30-20!")
+        print("="*60 + "\n")
+
+    def start(self):
+        self.banner()
+        name = input("Masukkan nama Awardee / Player: ").strip()
+        if not name:
+            name = "Awardee Bright"
+        self.player = Player(name)
+        
+        # Loop Months
+        self.month_august()
+        self.player.print_status()
+        
+        self.month_september()
+        self.player.print_status()
+        
+        self.month_october()
+        self.player.print_status()
+        
+        self.month_november()
+        self.player.print_status()
+        
+        self.month_december()
+        self.player.print_status()
+        
+        # End Game Evaluation
+        self.evaluate_game()
+
+if __name__ == "__main__":
+    game = FinQuestGame()
+    game.start()
